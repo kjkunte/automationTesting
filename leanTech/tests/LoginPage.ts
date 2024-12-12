@@ -1,4 +1,5 @@
 import { Page } from "@playwright/test";
+import { config } from "dotenv";
 
 export class LoginPage {
   private page: Page;
