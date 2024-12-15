@@ -8,18 +8,9 @@ import { CheckoutCompletePage } from "./checkoutComplete";
 import { IterationLoginTestPage } from "./iterationLoginTestPage";
 import { config } from "dotenv";
 config();
-const users: string[] = [
-  process.env.STANDARD_USER || "",
-  process.env.LOCKED_OUT_USER || "",
-  process.env.PROBLEM_USER || "",
-  process.env.PERFORMANCE_GLITCH_USER || "",
-  process.env.ERROR_USER || "",
-  process.env.VISUAL_USER || "",
-];
-const password: string = process.env.PASSWORD
+import {users, password} from "./config"; //Import from centralized config
 
 // Declaring users and password globally
-
 test("Customer flow - Random item selection and checkout", async ({ page }) => {
   // Page Object instances
   const loginPage = new LoginPage(page);
@@ -31,12 +22,14 @@ test("Customer flow - Random item selection and checkout", async ({ page }) => {
   const checkoutCompletePage = new CheckoutCompletePage(page);
   const iterationLoginPage = new IterationLoginTestPage(page);
 
+  
+
   // Step 1: Login
   await iterationLoginPage.tryLogin(users, password);
 
   // Use the valid credentials to proceed with the test flow
   await loginPage.navigate();
-  await loginPage.login(validUsername, password);
+  await loginPage.login(users, password);
 
 
   // Step 2: Add random items to the cart

@@ -1,22 +1,6 @@
 import { Page, expect } from "@playwright/test";
-import { config } from "dotenv";
 import { LoginPage } from "./loginPage";
-
-config();
-
-const users = [
-  process.env.STANDARD_USER,
-  process.env.LOCKED_OUT_USER,
-  process.env.PROBLEM_USER,
-  process.env.PERFORMANCE_GLITCH_USER,
-  process.env.ERROR_USER,
-  process.env.VISUAL_USER,
-];
-
-if (!process.env.PASSWORD) {
-  throw new Error("Password is not defined in the Environment Variables (.env file");
-}
-const password = process.env.PASSWORD
+import {users,password} from "./config";
 
 export class IterationLoginTestPage {
   private page: Page;
@@ -32,13 +16,14 @@ async tryLogin(users: string[], password: string) {
     if (!username) continue;
     console.log(`Test login for user: ${username}`);
     await loginPage.navigate();
-
-    //attempt lgin
-    await loginPage.login(username, password);
+    
+    await this.page.fill('[data-test="username"]', username);
+    await this.page.fill('[data-test="password"]', password);
+    await this.page.click('[data-test="login-button"]');
 
     // Verify login succes
     try {
-      await this.page.waitForURL(/.*inventory\,htmml/, {timeout:300});
+      await this.page.waitForURL(/.*inventory\.html/, {timeout:300});
       console.log(`Logged in Succesfully ${username}`);
       //call logout after successfully login
       await loginPage.logout();

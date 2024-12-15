@@ -1,5 +1,6 @@
 import { Page } from "@playwright/test";
-import { config } from "dotenv";
+import {users,password} from "./config";
+
 
 export class LoginPage {
   private page: Page;
@@ -12,27 +13,35 @@ export class LoginPage {
     await this.page.goto("https://www.saucedemo.com/");
   }
 
-  async login(username: string, password: string) {
-    await this.page.fill('[data-test="username"]', username);
-    await this.page.fill('[data-test="password"]', password);
-    await this.page.click('[data-test="login-button"]');
+
+
+  async login(users: string [], password: string) {
+    for (const username of users) {
+      await this.page.fill('[data-test="username"]', username);
+      await this.page.fill('[data-test="password"]', password);
+      await this.page.click('[data-test="login-button"]');
+      return
+    }
+  }
+  async openMenu() {
+    // Wait for the menu button to be visible
+    await this.page.waitForSelector("#react-burger-menu-btn");
+    
+    // Click the menu button
+    await this.page.click("#react-burger-menu-btn");
+    console.log("Clicked Menu button, sidebar opened.");
   }
 
-   async logout() {
+  async logout() {
+
+    // Wait for the logout button in the menu to appear
+    await this.openMenu();
+    await this.page.waitForSelector('[data-test="logout-sidebar-link"]');
+
     console.log("Attempting to log out...");
 
-    //Click on the Menu
-    const menuButton = '[data-test="menu-button"]';
-    await this.page.click(menuButton);
-    console.log("Menu button clicked.");
-
-    //Wait for sidebar to appear
-    const sidebar = '[data-test="sidebar"]';
-    await this.page.waitForSelector(sidebar, {state: "visible"});
-    console.log("Sidebar is visible");
-
     //logout
-    const logoutButton = '[data-test="logout"]';
+    const logoutButton = '[data-test="logout-sidebar-link"]';
     await this.page.click(logoutButton);
     console.log("Logout Button clicked.");
 
