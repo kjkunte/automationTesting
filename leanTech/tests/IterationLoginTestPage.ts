@@ -1,6 +1,6 @@
 import { Page, expect } from "@playwright/test";
 import { config } from "dotenv";
-import { LoginPage } from "./LoginPage";
+import { LoginPage } from "./loginPage";
 
 config();
 

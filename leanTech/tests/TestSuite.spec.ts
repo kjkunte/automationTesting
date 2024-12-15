@@ -1,11 +1,11 @@
 import { test, expect } from "@playwright/test";
-import { LoginPage } from "./LoginPage";
-import { InventoryPage } from "./Inventory";
-import { CartPage } from "./Cart";
-import { CheckoutStepOnePage } from "./CheckoutStepOnePage";
-import { CheckoutStepTwoPage } from "./CheckoutStepTwoPage";
-import { CheckoutCompletePage } from "./CheckoutComplete";
-import { IterationLoginTestPage } from "./IterationLoginTestPage";
+import { LoginPage } from "./loginPage";
+import { InventoryPage } from "./inventory";
+import { CartPage } from "./cart";
+import { CheckoutStepOnePage } from "./checkoutStepOnePage";
+import { CheckoutStepTwoPage } from "./checkoutStepTwoPage";
+import { CheckoutCompletePage } from "./checkoutComplete";
+import { IterationLoginTestPage } from "./iterationLoginTestPage";
 import { config } from "dotenv";
 config();
 const users: string[] = [
@@ -15,8 +15,10 @@ const users: string[] = [
   process.env.PERFORMANCE_GLITCH_USER || "",
   process.env.ERROR_USER || "",
   process.env.VISUAL_USER || "",
-
 ];
+const password: string = process.env.PASSWORD
+
+// Declaring users and password globally
 
 test("Customer flow - Random item selection and checkout", async ({ page }) => {
   // Page Object instances
