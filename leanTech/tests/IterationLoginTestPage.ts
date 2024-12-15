@@ -1,5 +1,6 @@
 import { Page, expect } from "@playwright/test";
 import { config } from "dotenv";
+import { LoginPage } from "./LoginPage";
 
 config();
 
@@ -11,7 +12,11 @@ const users = [
   process.env.ERROR_USER,
   process.env.VISUAL_USER,
 ];
-const password = process.env.PASSWORD || "secret_sauce";
+
+if (!process.env.PASSWORD) {
+  throw new Error("Password is not defined in the Environment Variables (.env file");
+}
+const password = process.env.PASSWORD
 
 export class IterationLoginTestPage {
   private page: Page;
@@ -20,28 +25,27 @@ export class IterationLoginTestPage {
     this.page = page;
   }
 
-  async findValidCredentials(): Promise<{ validUsername: string; password: string }> {
-    for (const username of users) {
-      if (!username) continue; // Skip empty usernames
+async tryLogin(users: string[], password: string) {
+  const loginPage = new LoginPage(this.page);
 
-      console.log(`Testing login for user: ${username}`);
-      await this.page.goto("https://www.saucedemo.com/");
+  for (const username of users) {
+    if (!username) continue;
+    console.log(`Test login for user: ${username}`);
+    await loginPage.navigate();
 
-      // Attempt login
-      await this.page.fill('[data-test="username"]', username);
-      await this.page.fill('[data-test="password"]', password);
-      await this.page.click('[data-test="login-button"]');
+    //attempt lgin
+    await loginPage.login(username, password);
 
-      // Check if login is successful
-      try {
-        await expect(this.page).toHaveURL(/.*inventory\.html/, { timeout: 3000 });
-        console.log(`Valid login found for user: ${username}`);
-        return { validUsername: username, password }; // Return on first success
-      } catch {
-        console.log(`Login failed for user: ${username}`);
-      }
+    // Verify login succes
+    try {
+      await this.page.waitForURL(/.*inventory\,htmml/, {timeout:300});
+      console.log(`Logged in Succesfully ${username}`);
+      //call logout after successfully login
+      await loginPage.logout();
+    } catch{
+      console.log(`Login failed for user: ${username}`);
     }
-
-    throw new Error("No valid credentials found.");
   }
+}
+
 }

@@ -8,6 +8,15 @@ import { CheckoutCompletePage } from "./CheckoutComplete";
 import { IterationLoginTestPage } from "./IterationLoginTestPage";
 import { config } from "dotenv";
 config();
+const users: string[] = [
+  process.env.STANDARD_USER || "",
+  process.env.LOCKED_OUT_USER || "",
+  process.env.PROBLEM_USER || "",
+  process.env.PERFORMANCE_GLITCH_USER || "",
+  process.env.ERROR_USER || "",
+  process.env.VISUAL_USER || "",
+
+];
 
 test("Customer flow - Random item selection and checkout", async ({ page }) => {
   // Page Object instances
@@ -21,15 +30,12 @@ test("Customer flow - Random item selection and checkout", async ({ page }) => {
   const iterationLoginPage = new IterationLoginTestPage(page);
 
   // Step 1: Login
-  // await loginPage.navigate();
-  // await loginPage.login("standard_user", "secret_sauce");
-  // Step 1: Find a valid username using IterationLoginTestPage
-  const { validUsername, password } = await iterationLoginPage.findValidCredentials();
+  await iterationLoginPage.tryLogin(users, password);
 
   // Use the valid credentials to proceed with the test flow
   await loginPage.navigate();
   await loginPage.login(validUsername, password);
-  console.log("Proceeding with valid credentials:", validUsername);
+
 
   // Step 2: Add random items to the cart
   await inventoryPage.addRandomItems(3);
@@ -40,7 +46,7 @@ test("Customer flow - Random item selection and checkout", async ({ page }) => {
 //   console.log(test1)
 
   // Step 4: Fill customer details
-  await checkoutStepOnePage.fillDetails("test", "here", "12345");
+  await checkoutStepOnePage.fillDetails("test", "here", "1234");
   await checkoutStepOnePage.continueCheckout();
 
   // Step 5: Complete checkout
