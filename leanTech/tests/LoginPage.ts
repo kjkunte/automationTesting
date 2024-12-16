@@ -13,8 +13,6 @@ export class LoginPage {
     await this.page.goto("https://www.saucedemo.com/");
   }
 
-
-
   async login(users: string [], password: string) {
     for (const username of users) {
       await this.page.fill('[data-test="username"]', username);
